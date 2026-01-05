@@ -1,0 +1,534 @@
+{
+  "countries": [
+    {
+      "code": "gb",
+      "name": "United Kingdom",
+      "region": "Europe",
+      "states": [
+        {
+          "code": "eng",
+          "name": "England",
+          "cities": [
+            {
+              "name": "London",
+              "districts": ["Central London", "North London", "South London", "East London", "West London", "City of London"]
+            },
+            {
+              "name": "Manchester",
+              "districts": ["Manchester City Centre", "North Manchester", "South Manchester", "East Manchester", "Trafford"]
+            },
+            {
+              "name": "Birmingham",
+              "districts": ["City Centre", "Edgbaston", "Selly Oak", "Solihull", "Coventry"]
+            },
+            {
+              "name": "Leeds",
+              "districts": ["City Centre", "North Leeds", "South Leeds", "East Leeds", "West Leeds"]
+            },
+            {
+              "name": "Bristol",
+              "districts": ["Bristol City Centre", "North Bristol", "South Bristol", "East Bristol"]
+            },
+            {
+              "name": "Liverpool",
+              "districts": ["City Centre", "Wirral", "Sefton", "St Helens"]
+            },
+            {
+              "name": "Sheffield",
+              "districts": ["City Centre", "North Sheffield", "South Sheffield", "East Sheffield", "West Sheffield"]
+            },
+            {
+              "name": "Newcastle",
+              "districts": ["City Centre", "Gateshead", "North Tyneside", "South Tyneside"]
+            },
+            {
+              "name": "Cambridge",
+              "districts": ["Cambridge City", "South Cambridgeshire"]
+            },
+            {
+              "name": "Oxford",
+              "districts": ["Oxford City", "Vale of White Horse", "Cherwell"]
+            }
+          ]
+        },
+        {
+          "code": "sco",
+          "name": "Scotland",
+          "cities": [
+            {
+              "name": "Edinburgh",
+              "districts": ["City Centre", "New Town", "Old Town", "South Edinburgh", "North Edinburgh"]
+            },
+            {
+              "name": "Glasgow",
+              "districts": ["City Centre", "South Side", "North East Glasgow", "West End"]
+            },
+            {
+              "name": "Aberdeen",
+              "districts": ["City Centre", "South Aberdeen", "North Aberdeen"]
+            },
+            {
+              "name": "Dundee",
+              "districts": ["City Centre", "East Dundee", "West Dundee"]
+            }
+          ]
+        },
+        {
+          "code": "wal",
+          "name": "Wales",
+          "cities": [
+            {
+              "name": "Cardiff",
+              "districts": ["City Centre", "North Cardiff", "South Cardiff", "East Cardiff"]
+            },
+            {
+              "name": "Swansea",
+              "districts": ["City Centre", "North Swansea", "South Swansea"]
+            },
+            {
+              "name": "Newport",
+              "districts": ["City Centre", "East Newport"]
+            }
+          ]
+        },
+        {
+          "code": "nir",
+          "name": "Northern Ireland",
+          "cities": [
+            {
+              "name": "Belfast",
+              "districts": ["City Centre", "North Belfast", "South Belfast", "East Belfast", "West Belfast"]
+            },
+            {
+              "name": "Derry",
+              "districts": ["City Centre", "East Derry"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "us",
+      "name": "United States",
+      "region": "North America",
+      "states": [
+        {
+          "code": "ca",
+          "name": "California",
+          "cities": [
+            {
+              "name": "Los Angeles",
+              "districts": ["Downtown LA", "Santa Monica", "Pasadena", "Long Beach", "Torrance"]
+            },
+            {
+              "name": "San Francisco",
+              "districts": ["Financial District", "SOMA", "Mission District", "Castro", "Marina"]
+            },
+            {
+              "name": "San Diego",
+              "districts": ["Downtown", "Pacific Beach", "Mission Beach", "La Jolla", "Old Town"]
+            },
+            {
+              "name": "Sacramento",
+              "districts": ["Downtown", "Midtown", "North Sacramento", "South Sacramento"]
+            }
+          ]
+        },
+        {
+          "code": "ny",
+          "name": "New York",
+          "cities": [
+            {
+              "name": "New York City",
+              "districts": ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island"]
+            },
+            {
+              "name": "Buffalo",
+              "districts": ["Downtown", "North Buffalo", "South Buffalo"]
+            },
+            {
+              "name": "Rochester",
+              "districts": ["Downtown", "East Rochester", "West Rochester"]
+            }
+          ]
+        },
+        {
+          "code": "tx",
+          "name": "Texas",
+          "cities": [
+            {
+              "name": "Houston",
+              "districts": ["Downtown", "Midtown", "Heights", "Uptown", "Medical Center"]
+            },
+            {
+              "name": "Dallas",
+              "districts": ["Downtown", "Uptown", "Oak Lawn", "Deep Ellum", "Arts District"]
+            },
+            {
+              "name": "Austin",
+              "districts": ["Downtown", "East Austin", "North Austin", "South Austin", "West Lake Hills"]
+            },
+            {
+              "name": "San Antonio",
+              "districts": ["Downtown", "North Side", "South Side", "East Side"]
+            }
+          ]
+        },
+        {
+          "code": "fl",
+          "name": "Florida",
+          "cities": [
+            {
+              "name": "Miami",
+              "districts": ["Downtown", "Brickell", "Wynwood", "Little Havana", "Coral Gables"]
+            },
+            {
+              "name": "Tampa",
+              "districts": ["Downtown", "Hyde Park", "Ybor City", "Busch Gardens"]
+            },
+            {
+              "name": "Jacksonville",
+              "districts": ["Downtown", "Riverside", "San Marco", "Five Points"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "in",
+      "name": "India",
+      "region": "Asia",
+      "states": [
+        {
+          "code": "mh",
+          "name": "Maharashtra",
+          "cities": [
+            {
+              "name": "Mumbai",
+              "districts": ["Central Mumbai", "South Mumbai", "North Mumbai", "East Mumbai", "Suburbs"]
+            },
+            {
+              "name": "Pune",
+              "districts": ["Central Pune", "Viman Nagar", "Kalyani Nagar", "Hinjewadi"]
+            },
+            {
+              "name": "Nagpur",
+              "districts": ["South Nagpur", "North Nagpur"]
+            }
+          ]
+        },
+        {
+          "code": "ka",
+          "name": "Karnataka",
+          "cities": [
+            {
+              "name": "Bangalore",
+              "districts": ["Whitefield", "Indiranagar", "Koramangala", "Marathahalli", "Jayanagar"]
+            },
+            {
+              "name": "Mysore",
+              "districts": ["Central Mysore", "Suburban Mysore"]
+            }
+          ]
+        },
+        {
+          "code": "tn",
+          "name": "Tamil Nadu",
+          "cities": [
+            {
+              "name": "Chennai",
+              "districts": ["Central Chennai", "North Chennai", "South Chennai", "West Chennai"]
+            },
+            {
+              "name": "Coimbatore",
+              "districts": ["Central Coimbatore", "North Coimbatore", "South Coimbatore"]
+            }
+          ]
+        },
+        {
+          "code": "gj",
+          "name": "Gujarat",
+          "cities": [
+            {
+              "name": "Ahmedabad",
+              "districts": ["Central Ahmedabad", "South Ahmedabad", "West Ahmedabad"]
+            },
+            {
+              "name": "Surat",
+              "districts": ["Central Surat", "North Surat", "South Surat"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "jp",
+      "name": "Japan",
+      "region": "Asia",
+      "states": [
+        {
+          "code": "tokyo",
+          "name": "Tokyo",
+          "cities": [
+            {
+              "name": "Tokyo",
+              "districts": ["Chiyoda", "Minato", "Shibuya", "Shinjuku", "Taito", "Meguro"]
+            }
+          ]
+        },
+        {
+          "code": "osaka",
+          "name": "Osaka",
+          "cities": [
+            {
+              "name": "Osaka",
+              "districts": ["Chuo", "Kita", "Minato", "Konohana", "Port Island"]
+            }
+          ]
+        },
+        {
+          "code": "kyoto",
+          "name": "Kyoto",
+          "cities": [
+            {
+              "name": "Kyoto",
+              "districts": ["Shimogyo", "Sakyo", "Nakagyo", "Minami", "Kita"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "de",
+      "name": "Germany",
+      "region": "Europe",
+      "states": [
+        {
+          "code": "bw",
+          "name": "Baden-Württemberg",
+          "cities": [
+            {
+              "name": "Stuttgart",
+              "districts": ["Mitte", "North", "South", "East", "West"]
+            },
+            {
+              "name": "Heidelberg",
+              "districts": ["Altstadt", "Bergheim", "Neuenheim", "Ziegelhausen"]
+            }
+          ]
+        },
+        {
+          "code": "by",
+          "name": "Bavaria",
+          "cities": [
+            {
+              "name": "Munich",
+              "districts": ["Altstadt", "Ludwigsvorstadt", "Isarvorstadt", "Schwabing", "Neuhausen"]
+            },
+            {
+              "name": "Nuremberg",
+              "districts": ["Altstadt", "Gostenhof", "Gärten", "Röthenbach"]
+            }
+          ]
+        },
+        {
+          "code": "nrw",
+          "name": "North Rhine-Westphalia",
+          "cities": [
+            {
+              "name": "Cologne",
+              "districts": ["Altstadt", "Innenstadt", "Rodenkirchen", "Nippes"]
+            },
+            {
+              "name": "Düsseldorf",
+              "districts": ["Altstadt", "Stadtmitte", "Oberkassel", "Pempelfort"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "br",
+      "name": "Brazil",
+      "region": "South America",
+      "states": [
+        {
+          "code": "sp",
+          "name": "São Paulo",
+          "cities": [
+            {
+              "name": "São Paulo",
+              "districts": ["Liberdade", "Vila Mariana", "Pinheiros", "Brooklin", "Morumbi"]
+            },
+            {
+              "name": "Campinas",
+              "districts": ["Centro", "Barão Geraldo", "Botafogo"]
+            }
+          ]
+        },
+        {
+          "code": "rj",
+          "name": "Rio de Janeiro",
+          "cities": [
+            {
+              "name": "Rio de Janeiro",
+              "districts": ["Centro", "Copacabana", "Ipanema", "Leblon", "Santa Teresa"]
+            },
+            {
+              "name": "Niterói",
+              "districts": ["Centro", "Icaraí", "São Gonçalo"]
+            }
+          ]
+        },
+        {
+          "code": "mg",
+          "name": "Minas Gerais",
+          "cities": [
+            {
+              "name": "Belo Horizonte",
+              "districts": ["Centro", "Funcionários", "Savassi", "Pampulha"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "au",
+      "name": "Australia",
+      "region": "Oceania",
+      "states": [
+        {
+          "code": "nsw",
+          "name": "New South Wales",
+          "cities": [
+            {
+              "name": "Sydney",
+              "districts": ["CBD", "Parramatta", "Manly", "Bondi", "Cronulla"]
+            },
+            {
+              "name": "Newcastle",
+              "districts": ["City Centre", "Wickham", "Newcastle East"]
+            }
+          ]
+        },
+        {
+          "code": "vic",
+          "name": "Victoria",
+          "cities": [
+            {
+              "name": "Melbourne",
+              "districts": ["CBD", "South Yarra", "Fitzroy", "Carlton", "Docklands"]
+            },
+            {
+              "name": "Geelong",
+              "districts": ["City Centre", "Newtown", "Bellerine Street"]
+            }
+          ]
+        },
+        {
+          "code": "qld",
+          "name": "Queensland",
+          "cities": [
+            {
+              "name": "Brisbane",
+              "districts": ["CBD", "South Bank", "Fortitude Valley", "Kangaroo Point"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "ca",
+      "name": "Canada",
+      "region": "North America",
+      "states": [
+        {
+          "code": "on",
+          "name": "Ontario",
+          "cities": [
+            {
+              "name": "Toronto",
+              "districts": ["Downtown", "North York", "Etobicoke", "Scarborough", "East York"]
+            },
+            {
+              "name": "Ottawa",
+              "districts": ["Downtown", "Byward Market", "Glebe", "Kanata"]
+            }
+          ]
+        },
+        {
+          "code": "qc",
+          "name": "Quebec",
+          "cities": [
+            {
+              "name": "Montreal",
+              "districts": ["Downtown", "Old Montreal", "Plateau", "Mile End", "Griffintown"]
+            },
+            {
+              "name": "Quebec City",
+              "districts": ["Vieux-Québec", "Saint-Roch", "Limoilou"]
+            }
+          ]
+        },
+        {
+          "code": "bc",
+          "name": "British Columbia",
+          "cities": [
+            {
+              "name": "Vancouver",
+              "districts": ["Downtown", "West End", "Kitsilano", "South Vancouver", "East Vancouver"]
+            },
+            {
+              "name": "Victoria",
+              "districts": ["Downtown", "James Bay", "Fairfield"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "sg",
+      "name": "Singapore",
+      "region": "Asia",
+      "states": [
+        {
+          "code": "sg",
+          "name": "Singapore",
+          "cities": [
+            {
+              "name": "Singapore",
+              "districts": ["Marina Bay", "Downtown Core", "Orchard", "Bukit Merah", "Geylang"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "ae",
+      "name": "United Arab Emirates",
+      "region": "Middle East",
+      "states": [
+        {
+          "code": "dub",
+          "name": "Dubai",
+          "cities": [
+            {
+              "name": "Dubai",
+              "districts": ["Downtown Dubai", "Marina", "Jumeirah", "DIFC", "Deira"]
+            }
+          ]
+        },
+        {
+          "code": "abu",
+          "name": "Abu Dhabi",
+          "cities": [
+            {
+              "name": "Abu Dhabi",
+              "districts": ["Downtown", "Marina", "Al Reem Island", "Saadiyat Island"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

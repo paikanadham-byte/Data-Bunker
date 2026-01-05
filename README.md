@@ -1,2 +1,68 @@
-# Data-Bunker
-I want to create an app that can give me all info about companies from around globe
+# Data Bunker - Global Company Search Platform
+
+A web application for finding and displaying active companies from around the globe using public, legal data sources.
+
+## Overview
+
+Data Bunker enables users to:
+- Search for companies by name, location, or industry
+- Filter by country → state/province → city
+- View company details (name, registration number, address, status, industry)
+- Explore public company information from multiple sources
+- Save favorite companies locally
+
+## Quick Start
+
+### 1. Get API Keys
+
+- **Companies House**: https://developer.companieshouse.gov.uk/
+- **OpenCorporates**: https://opencorporates.com/api
+
+### 2. Configure Environment
+
+**backend/.env**
+```
+PORT=5000
+COMPANIES_HOUSE_API_KEY=your_key_here
+OPENCORPORATES_API_KEY=your_key_here
+NODE_ENV=development
+```
+
+### 3. Install & Run
+
+```bash
+# Backend
+cd backend && npm install && npm start
+
+# Frontend (new terminal)
+cd frontend && npm install && npm start
+```
+
+Visit `http://localhost:3000`
+
+## Features (MVP)
+
+✅ Company search by name & location  
+✅ Filter by country → state → city  
+✅ Company details display  
+✅ Companies House integration (UK)  
+✅ Rate limiting & caching  
+
+## Tech Stack
+
+- **Backend**: Node.js + Express
+- **Frontend**: React.js + Axios
+- **APIs**: Companies House, OpenCorporates, SEC EDGAR
+- **Hosting**: Replit/Vercel/Render
+
+## Documentation
+
+- [API Sources](docs/API_SOURCES.md) - Detailed API reference
+- [Development](docs/DEVELOPMENT.md) - Adding countries & sources
+- [Deployment](docs/DEPLOYMENT.md) - Production setup
+
+## Roadmap
+
+- **Phase 1**: UK MVP (Companies House)
+- **Phase 2**: Global (OpenCorporates + 20 countries)
+- **Phase 3**: Advanced (accounts, exports, analytics)

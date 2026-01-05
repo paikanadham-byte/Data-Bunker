@@ -96,6 +96,78 @@ function CompanyDetailsModal({ show, company, onHide }) {
           </section>
         )}
 
+        {/* Contact Information from Google Places */}
+        {company.contactInfo && (
+          <section className="mb-4">
+            <h6 className="mb-3">📞 Contact Information</h6>
+            <Row>
+              {company.contactInfo.website && (
+                <Col md={12} className="mb-3">
+                  <p className="text-muted small mb-1">🌐 Website</p>
+                  <a 
+                    href={company.contactInfo.website} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary"
+                  >
+                    {company.contactInfo.website}
+                  </a>
+                </Col>
+              )}
+              
+              {company.contactInfo.phone && (
+                <Col md={6} className="mb-3">
+                  <p className="text-muted small mb-1">📱 Phone</p>
+                  <a href={`tel:${company.contactInfo.phone}`} className="text-primary">
+                    {company.contactInfo.phone}
+                  </a>
+                </Col>
+              )}
+
+              {company.contactInfo.rating && (
+                <Col md={6} className="mb-3">
+                  <p className="text-muted small mb-1">⭐ Google Rating</p>
+                  <p>
+                    {company.contactInfo.rating} / 5 
+                    <span className="text-muted small ms-2">
+                      ({company.contactInfo.totalRatings} reviews)
+                    </span>
+                  </p>
+                </Col>
+              )}
+
+              {company.contactInfo.emailPatterns && (
+                <Col md={12} className="mb-3">
+                  <p className="text-muted small mb-1">📧 Email Patterns (Common)</p>
+                  <div className="d-flex flex-wrap gap-2">
+                    {company.contactInfo.emailPatterns.patterns.map((email, idx) => (
+                      <Badge key={idx} bg="secondary" className="text-monospace">
+                        {email}
+                      </Badge>
+                    ))}
+                  </div>
+                  <p className="text-muted small mt-2 fst-italic">
+                    ⚠️ {company.contactInfo.emailPatterns.note}
+                  </p>
+                </Col>
+              )}
+
+              {company.contactInfo.googleMapsUrl && (
+                <Col md={12}>
+                  <a 
+                    href={company.contactInfo.googleMapsUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="btn btn-outline-success btn-sm"
+                  >
+                    📍 View on Google Maps
+                  </a>
+                </Col>
+              )}
+            </Row>
+          </section>
+        )}
+
         {/* Officers (UK only) */}
         {company.jurisdiction === 'gb' && (
           <section className="mb-4">

@@ -7,6 +7,7 @@ const express = require('express');
 const router = express.Router();
 const companiesHouse = require('../services/companiesHouse');
 const openCorporates = require('../services/openCorporates');
+const googlePlaces = require('../services/googlePlacesService');
 
 /**
  * GET /api/companies/test
@@ -80,6 +81,22 @@ router.get('/:companyNumber', async (req, res) => {
       console.log('[COMPANY DETAILS] Using OpenCorporates API');
       companyDetails = await openCorporates.getCompanyDetails(companyNumber, country);
       console.log('[COMPANY DETAILS] Successfully retrieved from OpenCorporates');
+    }
+
+    // Enrich with Google Places data for contact information
+    try {
+      console.log('[COMPANY DETAILS] Enriching with Google Places data...');
+      const enrichedData = await googlePlaces.enrichCompanyData(
+        companyDetails.name,
+        companyDetails.registeredOffice?.full
+      );
+      
+      if (enrichedData) {
+        console.log('[COMPANY DETAILS] Successfully enriched with contact info');
+        companyDetails.contactInfo = enrichedData;
+      }
+    } catch (error) {
+      console.warn('[COMPANY DETAILS] Could not enrich with Places data:', error.message);
     }
 
     res.json({

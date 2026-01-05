@@ -8,7 +8,7 @@ const cache = require('../utils/cache');
 const RateLimiter = require('../utils/rateLimiter');
 
 const API_KEY = process.env.COMPANIES_HOUSE_API_KEY;
-const BASE_URL = 'https://api.companieshouse.gov.uk';
+const BASE_URL = 'https://api.company-information.service.gov.uk';
 const API_AUTH = Buffer.from(`${API_KEY}:`).toString('base64');
 
 // Rate limiter: 10 requests per 10 seconds
@@ -38,9 +38,13 @@ class CompaniesHouseService {
       const searchParams = {
         q: query,
         items_per_page: options.limit || 20,
-        start_index: options.offset || 0,
-        company_status: options.status || 'active'
+        start_index: options.offset || 0
       };
+
+      console.log('[Companies House] Search request:', {
+        url: `${BASE_URL}/search/companies`,
+        params: searchParams
+      });
 
       const response = await axios.get(`${BASE_URL}/search/companies`, {
         params: searchParams,
@@ -51,10 +55,21 @@ class CompaniesHouseService {
         timeout: 10000
       });
 
+      console.log('[Companies House] Search response:', {
+        status: response.status,
+        itemsCount: response.data.items?.length || 0,
+        totalResults: response.data.total_results
+      });
+
       const formatted = this._formatSearchResults(response.data);
       cache.set('companieshouse:search', params, formatted, 3600); // Cache for 1 hour
       return formatted;
     } catch (error) {
+      console.error('[Companies House] Search error:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      });
       this._handleError(error);
     }
   }
@@ -79,6 +94,11 @@ class CompaniesHouseService {
     }
 
     try {
+      console.log('[Companies House] Company details request:', {
+        url: `${BASE_URL}/company/${companyNumber}`,
+        companyNumber
+      });
+
       const response = await axios.get(`${BASE_URL}/company/${companyNumber}`, {
         headers: {
           'Authorization': `Basic ${API_AUTH}`,
@@ -87,10 +107,22 @@ class CompaniesHouseService {
         timeout: 10000
       });
 
+      console.log('[Companies House] Company details response:', {
+        status: response.status,
+        companyName: response.data.company_name,
+        companyStatus: response.data.company_status
+      });
+
       const formatted = this._formatCompanyDetails(response.data);
       cache.set('companieshouse:details', params, formatted, 86400); // Cache for 24 hours
       return formatted;
     } catch (error) {
+      console.error('[Companies House] Company details error:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        companyNumber
+      });
       this._handleError(error);
     }
   }
@@ -115,6 +147,11 @@ class CompaniesHouseService {
     }
 
     try {
+      console.log('[Companies House] Officers request:', {
+        url: `${BASE_URL}/company/${companyNumber}/officers`,
+        companyNumber
+      });
+
       const response = await axios.get(`${BASE_URL}/company/${companyNumber}/officers`, {
         headers: {
           'Authorization': `Basic ${API_AUTH}`,
@@ -123,10 +160,21 @@ class CompaniesHouseService {
         timeout: 10000
       });
 
+      console.log('[Companies House] Officers response:', {
+        status: response.status,
+        officersCount: response.data.items?.length || 0
+      });
+
       const formatted = this._formatOfficers(response.data);
       cache.set('companieshouse:officers', params, formatted, 86400);
       return formatted;
     } catch (error) {
+      console.error('[Companies House] Officers error:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        companyNumber
+      });
       this._handleError(error);
     }
   }
@@ -135,7 +183,10 @@ class CompaniesHouseService {
    * Format search results
    */
   _formatSearchResults(data) {
-    if (!data.items) return { companies: [], total: 0 };
+    if (!data.items || !Array.isArray(data.items)) {
+      console.warn('[Companies House] No items in search results');
+      return { companies: [], total: 0 };
+    }
 
     return {
       companies: data.items.map(item => ({
@@ -144,12 +195,14 @@ class CompaniesHouseService {
         registrationNumber: item.company_number,
         status: item.company_status,
         type: item.company_type,
-        matched: item.matched_header || item.title,
-        url: item.links?.company_profile || `https://beta.companieshouse.gov.uk/company/${item.company_number}`,
+        matched: item.title,
+        address: item.address_snippet || null,
+        dateOfCreation: item.date_of_creation || null,
+        url: `https://find-and-update.company-information.service.gov.uk/company/${item.company_number}`,
         source: 'Companies House'
       })),
-      total: data.start_index + (data.items?.length || 0),
-      pageSize: data.items_per_page
+      total: data.total_results || data.items.length,
+      pageSize: data.items_per_page || 20
     };
   }
 
@@ -164,21 +217,29 @@ class CompaniesHouseService {
       status: data.company_status,
       type: data.type,
       incorporationDate: data.date_of_creation,
-      jurisdiction: 'United Kingdom (England)',
+      jurisdiction: data.jurisdiction || 'England/Wales',
       registeredOffice: this._formatAddress(data.registered_office_address),
       sicCodes: data.sic_codes || [],
-      sicDescription: data.sic_codes?.[0] || 'Unknown',
-      countOfOfficers: data.appointment_count,
-      accounts: {
-        lastFilingDate: data.last_accounts?.period_end_on,
-        overdue: data.accounts?.overdue
-      },
-      return: {
-        lastFilingDate: data.last_return?.period_end_on,
-        overdue: data.last_return?.overdue
-      },
-      url: `https://beta.companieshouse.gov.uk/company/${data.company_number}`,
-      source: 'Companies House'
+      sicDescription: data.sic_codes?.[0] || 'Not specified',
+      countOfOfficers: data.links?.officers ? parseInt(data.links.officers.split('/').pop()) : null,
+      canFile: data.can_file || false,
+      hasBeenLiquidated: data.has_been_liquidated || false,
+      hasInsolvencyHistory: data.has_insolvency_history || false,
+      accounts: data.accounts ? {
+        nextDue: data.accounts.next_due,
+        nextMadeUpTo: data.accounts.next_made_up_to,
+        lastFilingDate: data.accounts.last_accounts?.made_up_to,
+        overdue: data.accounts.overdue || false
+      } : null,
+      confirmationStatement: data.confirmation_statement ? {
+        nextDue: data.confirmation_statement.next_due,
+        nextMadeUpTo: data.confirmation_statement.next_made_up_to,
+        lastMadeUpTo: data.confirmation_statement.last_made_up_to,
+        overdue: data.confirmation_statement.overdue || false
+      } : null,
+      url: `https://find-and-update.company-information.service.gov.uk/company/${data.company_number}`,
+      source: 'Companies House',
+      rawData: data // Include raw data for debugging
     };
   }
 
@@ -230,21 +291,35 @@ class CompaniesHouseService {
    * Handle API errors
    */
   _handleError(error) {
+    console.error('[Companies House] Detailed error:', {
+      message: error.message,
+      code: error.code,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      headers: error.response?.headers
+    });
+
     if (error.response) {
-      switch (error.response.status) {
+      const { status, data } = error.response;
+      switch (status) {
         case 400:
-          throw new Error('Invalid search parameters');
+          throw new Error(`Invalid request: ${data?.errors?.[0]?.error || 'Bad request'}`);
         case 401:
-          throw new Error('Unauthorized - API key invalid');
+          throw new Error('Unauthorized - Companies House API key is invalid or missing');
         case 404:
-          throw new Error('Company not found');
+          throw new Error('Company not found in Companies House register');
         case 429:
-          throw new Error('Rate limit exceeded');
+          throw new Error('Rate limit exceeded - too many requests to Companies House API');
+        case 500:
+          throw new Error('Companies House API server error');
         default:
-          throw new Error(`API error: ${error.response.status}`);
+          throw new Error(`Companies House API error (${status}): ${data?.errors?.[0]?.error || 'Unknown error'}`);
       }
     } else if (error.code === 'ECONNABORTED') {
-      throw new Error('API request timeout');
+      throw new Error('Companies House API request timeout - please try again');
+    } else if (error.code === 'ENOTFOUND') {
+      throw new Error('Cannot connect to Companies House API - check your internet connection');
     } else {
       throw new Error(`Network error: ${error.message}`);
     }

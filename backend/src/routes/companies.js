@@ -9,6 +9,38 @@ const companiesHouse = require('../services/companiesHouse');
 const openCorporates = require('../services/openCorporates');
 
 /**
+ * GET /api/companies/test
+ * Test Companies House API connectivity
+ */
+router.get('/test', async (req, res) => {
+  try {
+    console.log('[TEST] Testing Companies House API...');
+    
+    // Test with a known UK company (e.g., "TESCO")
+    const result = await companiesHouse.searchCompanies('TESCO', { limit: 5 });
+    
+    console.log('[TEST] Companies House API test successful:', {
+      companiesFound: result.companies.length,
+      total: result.total
+    });
+    
+    res.json({
+      success: true,
+      message: 'Companies House API is working correctly',
+      data: result,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('[TEST] Companies House API test failed:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
  * GET /api/companies/:companyNumber
  * Get detailed company information
  * 
@@ -36,14 +68,18 @@ router.get('/:companyNumber', async (req, res) => {
       });
     }
 
-    console.log(`[COMPANY DETAILS] ${companyNumber} (${country})`);
+    console.log(`[COMPANY DETAILS] Request for ${companyNumber} (${country})`);
 
     let companyDetails = {};
 
-    if (country === 'gb') {
+    if (country.toLowerCase() === 'gb' || country.toLowerCase() === 'uk') {
+      console.log('[COMPANY DETAILS] Using Companies House API');
       companyDetails = await companiesHouse.getCompanyDetails(companyNumber);
+      console.log('[COMPANY DETAILS] Successfully retrieved from Companies House');
     } else {
+      console.log('[COMPANY DETAILS] Using OpenCorporates API');
       companyDetails = await openCorporates.getCompanyDetails(companyNumber, country);
+      console.log('[COMPANY DETAILS] Successfully retrieved from OpenCorporates');
     }
 
     res.json({
@@ -51,16 +87,33 @@ router.get('/:companyNumber', async (req, res) => {
       data: companyDetails
     });
   } catch (error) {
-    console.error('[COMPANY DETAILS ERROR]', error.message);
+    console.error('[COMPANY DETAILS ERROR]', {
+      message: error.message,
+      stack: error.stack,
+      companyNumber: req.params.companyNumber,
+      country: req.query.country
+    });
     
     if (error.message.includes('not found')) {
       return res.status(404).json({
+        success: false,
         error: 'Company not found',
-        type: 'not_found'
+        type: 'not_found',
+        details: error.message
+      });
+    }
+
+    if (error.message.includes('Unauthorized') || error.message.includes('API key')) {
+      return res.status(401).json({
+        success: false,
+        error: 'API authentication failed',
+        type: 'auth_error',
+        details: error.message
       });
     }
 
     res.status(500).json({
+      success: false,
       error: error.message,
       type: 'company_details_error'
     });
@@ -89,23 +142,32 @@ router.get('/:companyNumber/officers', async (req, res) => {
       });
     }
 
-    if (country !== 'gb') {
+    if (country !== 'gb' && country !== 'uk') {
       return res.status(400).json({
-        error: 'Officers information only available for UK companies'
+        success: false,
+        error: 'Officers information only available for UK companies',
+        type: 'invalid_country'
       });
     }
 
-    console.log(`[COMPANY OFFICERS] ${companyNumber}`);
+    console.log(`[COMPANY OFFICERS] Request for ${companyNumber}`);
 
     const officers = await companiesHouse.getCompanyOfficers(companyNumber);
+    
+    console.log('[COMPANY OFFICERS] Successfully retrieved officers');
 
     res.json({
       success: true,
       data: officers
     });
   } catch (error) {
-    console.error('[COMPANY OFFICERS ERROR]', error.message);
+    console.error('[COMPANY OFFICERS ERROR]', {
+      message: error.message,
+      companyNumber: req.params.companyNumber
+    });
+    
     res.status(500).json({
+      success: false,
       error: error.message,
       type: 'officers_error'
     });

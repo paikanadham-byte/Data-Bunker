@@ -5,6 +5,8 @@
 
 const express = require('express');
 const router = express.Router();
+const companiesHouse = require('../services/companiesHouse');
+const openCorporates = require('../services/openCorporates');
 const googleSearchService = require('../services/googleSearchService');
 const { validateSearch } = require('../utils/validators');
 
@@ -48,15 +50,28 @@ router.get('/', async (req, res) => {
 
     console.log(`[SEARCH] Query: "${query}", Location: ${country || 'global'} → ${state || '-'} → ${city || '-'} → ${district || '-'}`);
 
-    // Use Google Custom Search for all queries
-    const results = await googleSearchService.searchCompanies(query, {
-      country,
-      state,
-      city,
-      district,
-      limit,
-      offset
-    });
+    let results = {};
+
+    // Use Companies House for UK searches, OpenCorporates for other countries
+    if (country && (country.toLowerCase() === 'gb' || country.toLowerCase() === 'uk')) {
+      console.log('[SEARCH] Using Companies House API');
+      results = await companiesHouse.searchCompanies(query, { limit, offset });
+    } else if (country) {
+      console.log('[SEARCH] Using OpenCorporates API');
+      results = await openCorporates.searchCompanies(query, { country, limit, offset });
+    } else {
+      console.log('[SEARCH] Using Google Custom Search');
+      results = await googleSearchService.searchCompanies(query, {
+        country,
+        state,
+        city,
+        district,
+        limit,
+        offset
+      });
+    }
+
+    console.log(`[SEARCH] Found ${results.companies?.length || 0} companies`);
 
     res.json({
       success: true,
@@ -70,8 +85,13 @@ router.get('/', async (req, res) => {
       data: results
     });
   } catch (error) {
-    console.error('[SEARCH ERROR]', error.message);
+    console.error('[SEARCH ERROR]', {
+      message: error.message,
+      query: req.query.query,
+      country: req.query.country
+    });
     res.status(500).json({
+      success: false,
       error: error.message,
       type: 'search_error'
     });
@@ -109,12 +129,14 @@ router.get('/by-location', async (req, res) => {
 
     let results = {};
 
-    if (country === 'gb') {
+    if (country.toLowerCase() === 'gb' || country.toLowerCase() === 'uk') {
+      console.log('[LOCATION SEARCH] Using Companies House API');
       results = await companiesHouse.searchCompanies(locationQuery, { 
         limit: parseInt(limit), 
         offset: parseInt(offset) 
       });
     } else {
+      console.log('[LOCATION SEARCH] Using OpenCorporates API');
       results = await openCorporates.searchCompanies(locationQuery, { 
         country,
         limit: parseInt(limit), 
@@ -122,14 +144,20 @@ router.get('/by-location', async (req, res) => {
       });
     }
 
+    console.log(`[LOCATION SEARCH] Found ${results.companies?.length || 0} companies`);
+
     res.json({
       success: true,
       location: { country, state, city },
       data: results
     });
   } catch (error) {
-    console.error('[LOCATION SEARCH ERROR]', error.message);
+    console.error('[LOCATION SEARCH ERROR]', {
+      message: error.message,
+      country: req.query.country
+    });
     res.status(500).json({
+      success: false,
       error: error.message,
       type: 'location_search_error'
     });

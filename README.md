@@ -30,15 +30,34 @@ NODE_ENV=development
 
 ### 3. Install & Run
 
+**Option 1: Run both servers together (Recommended)**
 ```bash
-# Backend
-cd backend && npm install && npm start
+# Install all dependencies
+npm run install:all
 
-# Frontend (new terminal)
+# Run both backend and frontend dev servers
+npm run dev
+```
+
+**Option 2: Run servers separately**
+```bash
+# Backend (terminal 1)
+cd backend && npm install && npm run dev
+
+# Frontend (terminal 2)
 cd frontend && npm install && npm start
 ```
 
-Visit `http://localhost:3000`
+Visit `http://localhost:3000` (Frontend)  
+Backend API: `http://localhost:5000`
+
+## Available Scripts
+
+- `npm run dev` - Start both backend and frontend dev servers
+- `npm run dev:backend` - Start only backend dev server
+- `npm run dev:frontend` - Start only frontend dev server
+- `npm run install:all` - Install dependencies for root, backend, and frontend
+- `npm test` - Run backend tests
 
 ## Features (MVP)
 

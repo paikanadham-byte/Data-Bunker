@@ -12,7 +12,7 @@ import './HierarchicalLocationSelector.css';
  * - Optional filtering (can leave levels empty)
  * - Fast and scalable
  */
-function HierarchicalLocationSelector({ onLocationChange, selectedCountry, selectedState, selectedCity, selectedDistrict }) {
+function HierarchicalLocationSelector({ onLocationChange, selectedCountry, selectedState, selectedStateName: selectedStateLabel, selectedCity, selectedDistrict }) {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -56,7 +56,7 @@ function HierarchicalLocationSelector({ onLocationChange, selectedCountry, selec
       setStates([]);
       setCities([]);
       setDistricts([]);
-      onLocationChange({ country: null, state: null, city: null, district: null });
+      onLocationChange({ country: null, state: null, stateName: null, city: null, district: null });
       return;
     }
 
@@ -67,7 +67,7 @@ function HierarchicalLocationSelector({ onLocationChange, selectedCountry, selec
         setStates(response.data.data || []);
         setCities([]);
         setDistricts([]);
-        onLocationChange({ country: selectedCountry, state: null, city: null, district: null });
+        onLocationChange({ country: selectedCountry, state: null, stateName: null, city: null, district: null });
         setError(null);
       } catch (err) {
         setError('Failed to load states/provinces');
@@ -95,7 +95,8 @@ function HierarchicalLocationSelector({ onLocationChange, selectedCountry, selec
         const response = await locationService.getCities(selectedCountry, selectedState);
         setCities(response.data.data || []);
         setDistricts([]);
-        onLocationChange({ country: selectedCountry, state: selectedState, city: null, district: null });
+        const currentStateName = selectedStateLabel || states.find(s => s.code === selectedState)?.name;
+        onLocationChange({ country: selectedCountry, state: selectedState, stateName: currentStateName, city: null, district: null });
         setError(null);
       } catch (err) {
         setError('Failed to load cities');
@@ -121,7 +122,8 @@ function HierarchicalLocationSelector({ onLocationChange, selectedCountry, selec
         setLoading(true);
         const response = await locationService.getDistricts(selectedCountry, selectedState, selectedCity);
         setDistricts(response.data.data || []);
-        onLocationChange({ country: selectedCountry, state: selectedState, city: selectedCity, district: null });
+        const currentStateName = selectedStateLabel || states.find(s => s.code === selectedState)?.name;
+        onLocationChange({ country: selectedCountry, state: selectedState, stateName: currentStateName, city: selectedCity, district: null });
         setError(null);
       } catch (err) {
         setError('Failed to load districts');
@@ -158,7 +160,7 @@ function HierarchicalLocationSelector({ onLocationChange, selectedCountry, selec
   );
 
   const selectedCountryName = countries.find(c => c.code === selectedCountry)?.name;
-  const selectedStateName = states.find(s => s.code === selectedState)?.name;
+  const selectedStateName = selectedStateLabel || states.find(s => s.code === selectedState)?.name;
 
   return (
     <div className="hierarchical-location-selector">
@@ -189,7 +191,7 @@ function HierarchicalLocationSelector({ onLocationChange, selectedCountry, selec
                       key={country.code}
                       className={`dropdown-item ${selectedCountry === country.code ? 'active' : ''}`}
                       onClick={() => {
-                        onLocationChange({ country: country.code, state: null, city: null, district: null });
+                        onLocationChange({ country: country.code, state: null, stateName: null, city: null, district: null });
                         setCountrySearch('');
                         setShowCountryDropdown(false);
                       }}
@@ -233,7 +235,7 @@ function HierarchicalLocationSelector({ onLocationChange, selectedCountry, selec
                       key={state.code}
                       className={`dropdown-item ${selectedState === state.code ? 'active' : ''}`}
                       onClick={() => {
-                        onLocationChange({ country: selectedCountry, state: state.code, city: null, district: null });
+                        onLocationChange({ country: selectedCountry, state: state.code, stateName: state.name, city: null, district: null });
                         setStateSearch('');
                         setShowStateDropdown(false);
                       }}
@@ -276,7 +278,7 @@ function HierarchicalLocationSelector({ onLocationChange, selectedCountry, selec
                       key={city.name}
                       className={`dropdown-item ${selectedCity === city.name ? 'active' : ''}`}
                       onClick={() => {
-                        onLocationChange({ country: selectedCountry, state: selectedState, city: city.name, district: null });
+                        onLocationChange({ country: selectedCountry, state: selectedState, stateName: selectedStateName || city.parentStateName || states.find(s => s.code === selectedState)?.name || null, city: city.name, district: null });
                         setCitySearch('');
                         setShowCityDropdown(false);
                       }}
@@ -319,7 +321,7 @@ function HierarchicalLocationSelector({ onLocationChange, selectedCountry, selec
                       key={district}
                       className={`dropdown-item ${selectedDistrict === district ? 'active' : ''}`}
                       onClick={() => {
-                        onLocationChange({ country: selectedCountry, state: selectedState, city: selectedCity, district });
+                        onLocationChange({ country: selectedCountry, state: selectedState, stateName: selectedStateName || states.find(s => s.code === selectedState)?.name || null, city: selectedCity, district });
                         setDistrictSearch('');
                         setShowDistrictDropdown(false);
                       }}

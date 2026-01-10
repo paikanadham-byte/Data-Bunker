@@ -3,20 +3,19 @@ import { Form, InputGroup, Button, Spinner } from 'react-bootstrap';
 
 /**
  * SearchBar Component
- * Handles company name and location search
+ * Optional filter for company names
  */
-function SearchBar({ onSearch, loading = false }) {
+function SearchBar({ onSearch, loading = false, placeholder = "Search company name or keyword..." }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      onSearch(searchQuery);
-    }
+    onSearch(searchQuery.trim());
   };
 
   const handleClear = () => {
     setSearchQuery('');
+    onSearch(''); // Trigger search with empty query to show all companies
   };
 
   return (
@@ -26,7 +25,7 @@ function SearchBar({ onSearch, loading = false }) {
           🔍
         </InputGroup.Text>
         <Form.Control
-          placeholder="Search company name or keyword..."
+          placeholder={placeholder}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           disabled={loading}
@@ -35,7 +34,7 @@ function SearchBar({ onSearch, loading = false }) {
         <Button
           variant="primary"
           type="submit"
-          disabled={loading || !searchQuery.trim()}
+          disabled={loading}
         >
           {loading ? (
             <>
@@ -47,10 +46,10 @@ function SearchBar({ onSearch, loading = false }) {
                 aria-hidden="true"
                 className="me-2"
               />
-              Searching...
+              Filtering...
             </>
           ) : (
-            'Search'
+            'Filter'
           )}
         </Button>
         {searchQuery && (

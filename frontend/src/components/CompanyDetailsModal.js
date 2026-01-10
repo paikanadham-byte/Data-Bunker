@@ -29,10 +29,26 @@ function CompanyDetailsModal({ show, company, onHide }) {
 
   if (!company) return null;
 
+  // Calculate enrichment completeness
+  const enrichmentFields = ['website', 'email', 'phone'];
+  const enrichedCount = enrichmentFields.filter(field => company[field]).length;
+  const enrichmentPercentage = Math.round((enrichedCount / enrichmentFields.length) * 100);
+
   return (
     <Modal show={show} onHide={onHide} size="lg" centered>
       <Modal.Header closeButton>
-        <Modal.Title>{company.name}</Modal.Title>
+        <Modal.Title>
+          {company.name}
+          {enrichedCount > 0 && (
+            <Badge 
+              bg={enrichmentPercentage === 100 ? 'success' : enrichmentPercentage >= 66 ? 'info' : 'warning'} 
+              className="ms-2" 
+              style={{fontSize: '0.65rem', fontWeight: 'normal', verticalAlign: 'middle'}}
+            >
+              {enrichmentPercentage}% Enriched
+            </Badge>
+          )}
+        </Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
@@ -43,56 +59,144 @@ function CompanyDetailsModal({ show, company, onHide }) {
             <Col md={6}>
               <p className="text-muted small mb-1">Status</p>
               <p>
-                <Badge bg={company.status === 'active' ? 'success' : 'danger'}>
-                  {company.status}
+                <Badge bg={company.status === 'Active' || company.status === 'active' ? 'success' : 'danger'}>
+                  {company.status || 'Active'}
                 </Badge>
               </p>
             </Col>
             <Col md={6}>
               <p className="text-muted small mb-1">Registration Number</p>
-              <p className="fw-bold">{company.registrationNumber}</p>
+              <p className="fw-bold">{company.company_number || company.registration_number || company.registrationNumber || 'N/A'}</p>
             </Col>
           </Row>
 
           <Row className="mb-2">
             <Col md={6}>
               <p className="text-muted small mb-1">Company Type</p>
-              <p>{company.type}</p>
+              <p>{company.company_type || company.type || 'N/A'}</p>
             </Col>
             <Col md={6}>
               <p className="text-muted small mb-1">Incorporation Date</p>
               <p>
-                {company.incorporationDate 
-                  ? new Date(company.incorporationDate).toLocaleDateString()
+                {company.incorporation_date || company.incorporationDate 
+                  ? new Date(company.incorporation_date || company.incorporationDate).toLocaleDateString()
                   : 'N/A'}
               </p>
             </Col>
           </Row>
+
+          {company.jurisdiction && (
+            <Row className="mb-2">
+              <Col md={12}>
+                <p className="text-muted small mb-1">Jurisdiction</p>
+                <p>{company.jurisdiction}</p>
+              </Col>
+            </Row>
+          )}
         </section>
 
-        {/* Address */}
-        {company.registeredOffice ? (
+        {/* Contact Information - Enriched Data */}
+        {(company.website || company.email || company.phone || company.linkedin_url) && (
           <section className="mb-4">
-            <h6 className="mb-3">🏢 Registered Address</h6>
-            <p>{company.registeredOffice.full}</p>
-            {company.registeredOffice.city && (
-              <p className="text-muted small">
-                {company.registeredOffice.city}, {company.registeredOffice.state}, {company.registeredOffice.postalCode}
-              </p>
-            )}
+            <h6 className="mb-3">
+              📞 Contact Information 
+              <Badge bg="success" className="ms-2" style={{fontSize: '0.7rem', fontWeight: 'normal'}}>
+                Enriched
+              </Badge>
+            </h6>
+            <Row>
+              {company.website && (
+                <Col md={12} className="mb-3">
+                  <p className="text-muted small mb-1">🌐 Website</p>
+                  <a 
+                    href={company.website} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary"
+                  >
+                    {company.website}
+                  </a>
+                </Col>
+              )}
+              
+              {company.email && (
+                <Col md={6} className="mb-3">
+                  <p className="text-muted small mb-1">📧 Email</p>
+                  <a href={`mailto:${company.email}`} className="text-primary">
+                    {company.email}
+                  </a>
+                </Col>
+              )}
+
+              {company.phone && (
+                <Col md={6} className="mb-3">
+                  <p className="text-muted small mb-1">📱 Phone</p>
+                  <a href={`tel:${company.phone}`} className="text-primary">
+                    {company.phone}
+                  </a>
+                </Col>
+              )}
+
+              {company.linkedin_url && (
+                <Col md={12} className="mb-3">
+                  <p className="text-muted small mb-1">💼 LinkedIn</p>
+                  <a 
+                    href={company.linkedin_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary"
+                  >
+                    {company.linkedin_url}
+                  </a>
+                </Col>
+              )}
+            </Row>
           </section>
-        ) : company.address ? (
+        )}
+
+        {/* Address */}
+        {(company.address || company.registeredOffice || company.address_line_1) && (
           <section className="mb-4">
             <h6 className="mb-3">🏢 Address</h6>
-            <p>{company.address}</p>
+            {company.registeredOffice ? (
+              <>
+                <p>{company.registeredOffice.full}</p>
+                {company.registeredOffice.city && (
+                  <p className="text-muted small">
+                    {company.registeredOffice.city}, {company.registeredOffice.state}, {company.registeredOffice.postalCode}
+                  </p>
+                )}
+              </>
+            ) : (
+              <>
+                <p>{company.address || company.address_line_1}</p>
+                {company.address_line_2 && <p>{company.address_line_2}</p>}
+                {(company.locality || company.region || company.postal_code) && (
+                  <p className="text-muted small">
+                    {[company.locality, company.region, company.postal_code].filter(Boolean).join(', ')}
+                  </p>
+                )}
+                {company.country && (
+                  <p className="text-muted small">{company.country}</p>
+                )}
+              </>
+            )}
           </section>
-        ) : null}
+        )}
 
         {/* Industry/SIC */}
-        {company.sicDescription && (
+        {(company.industry || company.sicDescription) && (
           <section className="mb-4">
             <h6 className="mb-3">🏭 Industry</h6>
-            <p>{company.sicDescription}</p>
+            <p>{company.industry || company.sicDescription}</p>
+          </section>
+        )}
+
+        {/* Description */}
+        {company.description && (
+          <section className="mb-4">
+            <h6 className="mb-3">📝 Description</h6>
+            <p>{company.description}</p>
           </section>
         )}
 

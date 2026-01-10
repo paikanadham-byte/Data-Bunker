@@ -4,7 +4,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const api = axios.create({
   baseURL: `${API_BASE_URL}/api`,
-  timeout: 10000,
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -32,25 +32,37 @@ api.interceptors.response.use(
 );
 
 export const searchService = {
+  // Use database endpoints (no API keys required!)
   searchCompanies: (query, country, state, city, district, limit = 20, offset = 0) =>
-    api.get('/search', {
-      params: { query, country, state, city, district, limit, offset }
+    api.get('/db/search', {
+      params: { 
+        query, 
+        country, 
+        region: state,  // Database uses 'region' instead of 'state'
+        locality: city, // Database uses 'locality' instead of 'city'
+        limit, 
+        offset 
+      }
     }),
 
   searchByLocation: (country, state, city, limit = 20) =>
-    api.get('/search/by-location', {
-      params: { country, state, city, limit }
+    api.get('/db/search', {
+      params: { 
+        country, 
+        region: state,
+        locality: city,
+        limit 
+      }
     })
 };
 
 export const companyService = {
+  // Use database endpoints (no API keys required!)
   getDetails: (companyNumber, country) =>
-    api.get(`/companies/${companyNumber}`, {
-      params: { country }
-    }),
+    api.get(`/db/companies/${companyNumber}`),
 
   getOfficers: (companyNumber, country) =>
-    api.get(`/companies/${companyNumber}/officers`, {
+    api.get(`/officers/${companyNumber}`, {
       params: { country }
     })
 };
@@ -70,6 +82,11 @@ export const locationService = {
 
   getIndustries: () =>
     api.get('/locations/industries')
+};
+
+export const enrichmentService = {
+  getStats: () =>
+    api.get('/enrichment/stats')
 };
 
 export default api;

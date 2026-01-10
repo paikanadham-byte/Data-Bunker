@@ -11,16 +11,41 @@ const path = require('path');
 dotenv.config();
 
 // Database pool configuration
-const pool = new Pool({
+// Use DATABASE_URL if available (includes all connection params and SSL mode)
+// Otherwise, use individual environment variables
+const poolConfig = process.env.DATABASE_URL ? {
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false // Required for Neon and other cloud databases
+  },
+  max: 50, // Maximum number of clients in the pool
+  min: 5, // Minimum number of clients in the pool
+  idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+  connectionTimeoutMillis: 10000, // Return error after 10 seconds if connection not established
+  allowExitOnIdle: false, // Don't allow pool to exit on idle
+  maxUses: 7500 // Close connection after 7500 uses
+} : {
   user: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'data_bunker',
-  max: parseInt(process.env.DB_POOL_SIZE) || 20,
+  database: process.env.DB_NAME || 'databunker',
+  max: parseInt(process.env.DB_POOL_SIZE) || 50,
+  min: 5,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
+  connectionTimeoutMillis: 10000,
+  allowExitOnIdle: false,
+  maxUses: 7500
+};
+
+// Add SSL configuration for Neon or other cloud databases (if using individual params)
+if (!process.env.DATABASE_URL && (process.env.DB_SSL === 'true' || process.env.DB_HOST?.includes('neon.tech'))) {
+  poolConfig.ssl = {
+    rejectUnauthorized: false // Required for Neon
+  };
+}
+
+const pool = new Pool(poolConfig);
 
 // Connection event handlers
 pool.on('error', (err) => {

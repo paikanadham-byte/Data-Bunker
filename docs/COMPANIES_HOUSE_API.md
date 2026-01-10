@@ -40,7 +40,7 @@ cp .env.example .env
 
 Your `.env` should have:
 ```env
-COMPANIES_HOUSE_API_KEY=your_actual_api_key_here
+COMPANIES_HOUSE_API_KEY=a63cf07f-2099-4182-91e0-a89edb762c96
 PORT=5000
 NODE_ENV=development
 CORS_ORIGIN=http://localhost:3000

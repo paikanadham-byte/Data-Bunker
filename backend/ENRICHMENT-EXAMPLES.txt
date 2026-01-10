@@ -1,0 +1,87 @@
+/**
+ * EXAMPLE: What Workers Will Save Now
+ */
+
+console.log('═══════════════════════════════════════════════════════════');
+console.log('📊 EMAIL ENRICHMENT - NEW BEHAVIOR');
+console.log('═══════════════════════════════════════════════════════════\n');
+
+console.log('SCENARIO 1: Workers Find Actual Employee Email');
+console.log('─────────────────────────────────────────────────────────');
+console.log('  Company: TechCorp Ltd');
+console.log('  Website: https://www.techcorp.co.uk');
+console.log('  Emails Found on Website:');
+console.log('    • info@techcorp.co.uk');
+console.log('    • sarah.jones@techcorp.co.uk ← ACTUAL EMPLOYEE!');
+console.log('    • contact@techcorp.co.uk');
+console.log('');
+console.log('  ✅ SAVED TO DATABASE:');
+console.log('     Email: sarah.jones@techcorp.co.uk');
+console.log('     Type: Real employee email found!');
+console.log('');
+
+console.log('\nSCENARIO 2: Workers Find Personal Format Email');
+console.log('─────────────────────────────────────────────────────────');
+console.log('  Company: DigitalHub Solutions');
+console.log('  Website: https://www.digitalhub.com');
+console.log('  Emails Found on Website:');
+console.log('    • hello@digitalhub.com');
+console.log('    • james@digitalhub.com ← PERSONAL FORMAT!');
+console.log('    • support@digitalhub.com');
+console.log('');
+console.log('  ✅ SAVED TO DATABASE:');
+console.log('     Email: james@digitalhub.com');
+console.log('     Type: Personal email (firstname format)');
+console.log('');
+
+console.log('\nSCENARIO 3: Only Generic Emails Found (info@, hello@)');
+console.log('─────────────────────────────────────────────────────────');
+console.log('  Company: CloudServices Ltd');
+console.log('  Website: https://www.cloudservices.io');
+console.log('  Emails Found on Website:');
+console.log('    • info@cloudservices.io');
+console.log('    • hello@cloudservices.io');
+console.log('    • contact@cloudservices.io');
+console.log('');
+console.log('  ✅ SAVED TO DATABASE:');
+console.log('     Email: [firstname@cloudservices.io | first.last@cloudservices.io | firstlast@cloudservices.io]');
+console.log('     Type: Format patterns (no real emails found)');
+console.log('');
+
+console.log('\nSCENARIO 4: No Emails Found at All');
+console.log('─────────────────────────────────────────────────────────');
+console.log('  Company: PrivateCorp Ltd');
+console.log('  Website: https://www.privatecorp.com');
+console.log('  Emails Found on Website: (none)');
+console.log('');
+console.log('  ✅ SAVED TO DATABASE:');
+console.log('     Email: [firstname@privatecorp.com | first.last@privatecorp.com | firstlast@privatecorp.com]');
+console.log('     Type: Format patterns (guidance for users)');
+console.log('');
+
+console.log('\n═══════════════════════════════════════════════════════════');
+console.log('📞 UK PHONE FORMATTING');
+console.log('═══════════════════════════════════════════════════════════\n');
+
+console.log('UK COMPANY EXAMPLES:');
+console.log('─────────────────────────────────────────────────────────');
+console.log('  Input: 020 7946 0958 → Output: +44 2079 460 958 ✅');
+console.log('  Input: 07912345678   → Output: +44 7912 345 678 ✅');
+console.log('  Input: 01234 567890  → Output: +44 1234 567 890 ✅');
+console.log('  Input: 441612345678  → Output: +44 1612 345 678 ✅');
+console.log('');
+console.log('NON-UK COMPANY (Skipped):');
+console.log('  Input: 020 1234 5678 (USA) → Output: 020 1234 5678 (unchanged)');
+console.log('');
+
+console.log('\n═══════════════════════════════════════════════════════════');
+console.log('✅ SUMMARY');
+console.log('═══════════════════════════════════════════════════════════\n');
+console.log('Priority 1: Find ACTUAL employee emails (sarah.jones@, james@)');
+console.log('Priority 2: Use personal format emails (firstname@, first.last@)');
+console.log('Priority 3: If none found, save EMAIL FORMAT PATTERNS');
+console.log('');
+console.log('UK Phones: Always formatted with +44 country code');
+console.log('Non-UK: Left unchanged');
+console.log('');
+console.log('🚀 Workers are LIVE with this logic now!\n');

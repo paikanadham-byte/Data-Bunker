@@ -1,6 +1,9 @@
 /**
  * Companies API Route
  * Endpoint: /api/companies
+ * 
+ * AUTOMATICALLY USES DATABASE when API keys are not configured
+ * No API keys needed if you have data in your database!
  */
 
 const express = require('express');
@@ -8,6 +11,10 @@ const router = express.Router();
 const companiesHouse = require('../services/companiesHouse');
 const openCorporates = require('../services/openCorporates');
 const googlePlaces = require('../services/googlePlacesService');
+const companyRepository = require('../models/companyRepository');
+
+// Check if API keys are available
+const HAS_API_KEYS = !!(process.env.COMPANIES_HOUSE_API_KEY || process.env.OPENCORPORATES_API_KEY);
 
 /**
  * GET /api/companies/test
@@ -57,9 +64,46 @@ router.get('/:companyNumber', async (req, res) => {
     const { companyNumber } = req.params;
     const { country } = req.query;
 
+    console.log(`[COMPANY DETAILS] Request for ${companyNumber} (${country || 'not specified'})`);
+    console.log(`[COMPANY DETAILS] API Keys Available: ${HAS_API_KEYS ? 'Yes' : 'No (using database)'}`);
+
+    // If no API keys, try database first
+    if (!HAS_API_KEYS) {
+      console.log('[COMPANY DETAILS] No API keys configured - checking database');
+      try {
+        const company = await companyRepository.getCompanyByNumber(companyNumber);
+        
+        if (company) {
+          console.log('[COMPANY DETAILS] Found in database');
+          return res.json({
+            success: true,
+            source: 'database',
+            data: company,
+            message: 'Retrieved from local database. To use external APIs, add API keys to .env file.'
+          });
+        } else {
+          console.log('[COMPANY DETAILS] Not found in database');
+          return res.status(404).json({
+            success: false,
+            error: 'Company not found in database',
+            message: 'To search external APIs, add API keys to .env file.',
+            companyNumber
+          });
+        }
+      } catch (dbError) {
+        console.error('[COMPANY DETAILS] Database error:', dbError.message);
+        return res.status(500).json({
+          success: false,
+          error: 'Database error',
+          details: dbError.message
+        });
+      }
+    }
+
+    // If API keys available, use external APIs
     if (!country) {
       return res.status(400).json({
-        error: 'Country parameter is required'
+        error: 'Country parameter is required when using external APIs'
       });
     }
 
@@ -68,8 +112,6 @@ router.get('/:companyNumber', async (req, res) => {
         error: 'Company number is required'
       });
     }
-
-    console.log(`[COMPANY DETAILS] Request for ${companyNumber} (${country})`);
 
     let companyDetails = {};
 

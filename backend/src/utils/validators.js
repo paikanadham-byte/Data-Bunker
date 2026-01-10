@@ -6,10 +6,11 @@ const Joi = require('joi');
 
 /**
  * Validate search query with hierarchical location filters
+ * Query is optional - if not provided, will fetch all companies in the location
  */
 const searchSchema = Joi.object({
-  query: Joi.string().min(1).max(200).required(),
-  country: Joi.string().length(2).optional().allow(null, ''),
+  query: Joi.string().min(1).max(200).optional().allow(null, ''),
+  country: Joi.string().min(2).max(100).optional().allow(null, ''),
   state: Joi.string().max(100).optional().allow(null, ''),
   city: Joi.string().max(100).optional().allow(null, ''),
   district: Joi.string().max(100).optional().allow(null, ''),

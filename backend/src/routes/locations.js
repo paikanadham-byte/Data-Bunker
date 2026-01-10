@@ -5,7 +5,34 @@
 
 const express = require('express');
 const router = express.Router();
-const locationsData = require('../../../data/locations/index.json');
+const path = require('path');
+const fs = require('fs');
+
+// Try multiple possible paths for the locations data
+let locationsData;
+const possiblePaths = [
+  path.join(__dirname, '../../../data/locations/index.json'),
+  path.join(__dirname, '../../data/locations/index.json'),
+  path.join(process.cwd(), 'data/locations/index.json')
+];
+
+for (const jsonPath of possiblePaths) {
+  try {
+    if (fs.existsSync(jsonPath)) {
+      locationsData = require(jsonPath);
+      console.log(`✅ Loaded locations data from: ${jsonPath}`);
+      break;
+    }
+  } catch (err) {
+    continue;
+  }
+}
+
+if (!locationsData) {
+  console.error('❌ Could not find locations data file');
+  // Fallback to minimal data structure
+  locationsData = { countries: [] };
+}
 
 /**
  * GET /api/locations/countries
@@ -166,26 +193,154 @@ router.get('/countries/:countryCode/states/:stateCode/cities/:cityName/districts
 router.get('/industries', (req, res) => {
   try {
     const industries = [
-      'Technology',
-      'Finance & Banking',
-      'Healthcare',
-      'Retail',
-      'Manufacturing',
-      'Real Estate',
-      'Energy',
-      'Transportation',
-      'Education',
-      'Hospitality',
-      'Legal Services',
-      'Consulting',
-      'Media & Entertainment',
-      'Telecommunications',
+      'Accounting',
       'Agriculture',
-      'Construction',
-      'Insurance',
+      'Airlines/Aviation',
+      'Alternative Dispute Resolution',
+      'Alternative Medicine',
+      'Animation',
+      'Apparel & Fashion',
+      'Architecture & Planning',
+      'Arts & Crafts',
       'Automotive',
+      'Aviation & Aerospace',
+      'Banking',
+      'Biotechnology',
+      'Broadcast Media',
+      'Building Materials',
+      'Business Supplies & Equipment',
+      'Capital Markets',
+      'Chemicals',
+      'Civic & Social Organization',
+      'Civil Engineering',
+      'Commercial Real Estate',
+      'Computer & Network Security',
+      'Computer Games',
+      'Computer Hardware',
+      'Computer Networking',
+      'Computer Software',
+      'Construction',
+      'Consumer Electronics',
+      'Consumer Goods',
+      'Consumer Services',
+      'Cosmetics',
+      'Dairy',
+      'Defense & Space',
+      'Design',
+      'E-Learning',
+      'Education Management',
+      'Electrical/Electronic Manufacturing',
+      'Entertainment',
+      'Environmental Services',
+      'Events Services',
+      'Executive Office',
+      'Facilities Services',
+      'Farming',
+      'Financial Services',
+      'Fine Art',
+      'Fishery',
+      'Food & Beverages',
+      'Food Production',
+      'Fund-Raising',
+      'Furniture',
+      'Gambling & Casinos',
+      'Glass, Ceramics & Concrete',
+      'Government Administration',
+      'Government Relations',
+      'Graphic Design',
+      'Health, Wellness & Fitness',
+      'Higher Education',
+      'Hospital & Health Care',
+      'Hospitality',
+      'Human Resources',
+      'Import & Export',
+      'Individual & Family Services',
+      'Industrial Automation',
+      'Information Services',
+      'Information Technology & Services',
+      'Insurance',
+      'International Affairs',
+      'International Trade & Development',
+      'Internet',
+      'Investment Banking',
+      'Investment Management',
+      'Judiciary',
+      'Law Enforcement',
+      'Law Practice',
+      'Legal Services',
+      'Legislative Office',
+      'Leisure, Travel & Tourism',
+      'Libraries',
+      'Logistics & Supply Chain',
+      'Luxury Goods & Jewelry',
+      'Machinery',
+      'Management Consulting',
+      'Maritime',
+      'Market Research',
+      'Marketing & Advertising',
+      'Mechanical or Industrial Engineering',
+      'Media Production',
+      'Medical Devices',
+      'Medical Practice',
+      'Mental Health Care',
+      'Military',
+      'Mining & Metals',
+      'Motion Pictures & Film',
+      'Museums & Institutions',
+      'Music',
+      'Nanotechnology',
+      'Newspapers',
+      'Nonprofit Organization Management',
+      'Oil & Energy',
+      'Online Media',
+      'Outsourcing/Offshoring',
+      'Package/Freight Delivery',
+      'Packaging & Containers',
+      'Paper & Forest Products',
+      'Performing Arts',
       'Pharmaceuticals',
-      'Other'
+      'Philanthropy',
+      'Photography',
+      'Plastics',
+      'Political Organization',
+      'Primary/Secondary Education',
+      'Printing',
+      'Professional Training & Coaching',
+      'Program Development',
+      'Public Policy',
+      'Public Relations & Communications',
+      'Public Safety',
+      'Publishing',
+      'Railroad Manufacture',
+      'Ranching',
+      'Real Estate',
+      'Recreational Facilities & Services',
+      'Religious Institutions',
+      'Renewables & Environment',
+      'Research',
+      'Restaurants',
+      'Retail',
+      'Security & Investigations',
+      'Semiconductors',
+      'Shipbuilding',
+      'Sporting Goods',
+      'Sports',
+      'Staffing & Recruiting',
+      'Supermarkets',
+      'Telecommunications',
+      'Textiles',
+      'Think Tanks',
+      'Tobacco',
+      'Translation & Localization',
+      'Transportation/Trucking/Railroad',
+      'Utilities',
+      'Venture Capital & Private Equity',
+      'Veterinary',
+      'Warehousing',
+      'Wholesale',
+      'Wine & Spirits',
+      'Wireless',
+      'Writing & Editing'
     ];
 
     res.json({

@@ -180,7 +180,7 @@ class CompaniesHouseService {
   }
 
   /**
-   * Format search results
+   * Format search results with detailed address parsing
    */
   _formatSearchResults(data) {
     if (!data.items || !Array.isArray(data.items)) {
@@ -189,21 +189,52 @@ class CompaniesHouseService {
     }
 
     return {
-      companies: data.items.map(item => ({
-        id: item.company_number,
-        name: item.title,
-        registrationNumber: item.company_number,
-        status: item.company_status,
-        type: item.company_type,
-        matched: item.title,
-        address: item.address_snippet || null,
-        dateOfCreation: item.date_of_creation || null,
-        url: `https://find-and-update.company-information.service.gov.uk/company/${item.company_number}`,
-        source: 'Companies House'
-      })),
+      companies: data.items.map(item => {
+        const fullAddress = this._parseAddressSnippet(item.address_snippet, item.address);
+        
+        return {
+          id: item.company_number,
+          name: item.title,
+          registrationNumber: item.company_number,
+          status: item.company_status,
+          type: item.company_type,
+          matched: item.title,
+          address: item.address_snippet || null,
+          addressParsed: fullAddress,
+          dateOfCreation: item.date_of_creation || null,
+          url: `https://find-and-update.company-information.service.gov.uk/company/${item.company_number}`,
+          source: 'Companies House'
+        };
+      }),
       total: data.total_results || data.items.length,
       pageSize: data.items_per_page || 20
     };
+  }
+
+  /**
+   * Parse address snippet into structured components
+   */
+  _parseAddressSnippet(snippet, addressObj) {
+    if (addressObj) {
+      return {
+        line1: addressObj.address_line_1 || '',
+        line2: addressObj.address_line_2 || '',
+        locality: addressObj.locality || '',
+        region: addressObj.region || '',
+        postalCode: addressObj.postal_code || '',
+        country: addressObj.country || 'United Kingdom',
+        full: snippet || this._formatAddress(addressObj)
+      };
+    }
+    
+    if (snippet) {
+      return {
+        full: snippet,
+        parsed: true
+      };
+    }
+    
+    return null;
   }
 
   /**
